@@ -1,0 +1,62 @@
+Part 1 - Problem Analysis
+
+    1. Constrangerea de timp
+        Furtuna este la 12 minute distantam iar delay-ul de comunicare cu Pamantul este de 14 minute. Orice comanda de la sol
+va ajunge la drona abia dupa 2 minute dupa ce aceasta a intrat deja in furtuna. Acesta constrangere face imposibila
+teleoperarea si ne obliga sa proiectam un sistem decizional 100% autonom.
+
+    2. Asumptii
+        Presupunem ca drona are deja stocate in memorie o serie de manevre de contingenta (Hold Position/Land, Evasion Route,
+Push Through). Problema arhitecturii noastre nu este sa calculeze aerodinamica zborului de la 0, ci sa evalueaza mediul
+pentru a alege rapid planul optim din aceasta baza de date.
+
+    3. Vizibilitatea
+        Praful este foarte fin iar vizbilitatea scade din cauza fenomenului de imprastiere a luminii (scattering),nu doar
+din cauza existenta prafului.
+        Tau-unitate de masura pentru opacitatea atmosferei. O zi senina are tau aproximativ egal cu 0.5 iar o furtuna severa
+poate ajunge la tau>10.
+        Senzorii afectati: Camerele video devin inutile foarte repede. Daca drona foloseste VIO( Visual Inertial Odometry)
+pentru a isi mentine pozitia, aceasta va esua. Drona nu mai stie daca se misca sau sta pe loc
+            Solutia tehnica: Din cauza riscului de esesc al sistemului VIO la un prag tau > 10, propun ca arhitectura software
+sa includa un mecanism de rezerva automat(fallback): cand senzorii optici raporteaza o acuratete scazuta, drona va trece
+exclusiv pe citirile de la Radar
+
+    4. Impactul asupra Dronei
+        Puterea Solara: Daca drona este dependenta de panouri solare, o furtuna ii taie sursa de alimentare. Praful depus pe
+panourile solare poate reduce eficienta cu 80% chiar si dupa ce furtuna trece.
+        Densitatea Aerului: Furtuna schimba densitatea locala a atmosferei si creeaza turbulente masive. Deoarece atmosfera de
+pe Planeta Marte este deja foarte rarefiata(1% din cea a Pamantului), orice mica schimbare face ca drona sa consume mai
+multa energie pentru a ramane in aer.
+        Abraziunea: Particulele de praf nu pot fi rotunjite prin eroziune. Acestea pot slefui lentilele senzorilor sau pot
+bloca articulatiile mobile.
+
+    5. Comunicarea cu Pamantul
+        Frecvente: Comunicarea se face de obicei in benzile X sau Ka. Praful martian contine mult oxid de fier, care poate
+absorbi si reflecta undele radio.
+        Zgomotul: Furtunile de praf de pe Marte pot genera mici fulgere. Acestea creeaza zgomot electromagnetic care pot acoperi
+semnalul slab de pe Pamant
+        Concluzie: In timpul furtunii, latimea de banda(bitrate-ul) scade dramatic. Drona nu mai poate trimite video-uri complexe
+ci doar pachete scurte de date.
+
+Part 2 - Proposed Solution & Architecture
+    Arhitectura Sistemului
+        Sistemul Concurent: Senzorii ruleaza pe thread-uri independente, actualizand un pipeline de date
+        Motorul de decizie: Ruleaza o data pe secunda, preia datele din pipeline si reevalueaza ruta optima folosind o
+functie de cost
+    Logica de decizie
+        Am ales o abordare bazata pe Cost Function deoarece ofera o scalabilitate mult mai buna. In loc sa fortam drona pe
+pe niste praguri rigide, calculam matematic un "Scor de risc" pentru fiecare manevra din baza de date. Manevra cu scorul
+cel mai mic va fi executata.
+
+    De ce solutia aceasta?
+        Siguranta: Sistemul elimina automat optiunile care ar duce la pierderea dronei
+        Predictibilitate: Fiind o functie pura, comportamentul dronei poate fi simulat si testat exhaustiv inainte de o
+        o misiune
+
+Part 3 - Rulare si testare
+    Solutia este construita in Java si include o suita de teste unitare pentru a demonstra ca este production-ready
+    Testele verifica scenarii precum:
+        Furtuna slaba + Baterie plina => PUSH_THROUGH
+        Furtuna severa + Baterie scazut => HOLD_POSITION
+        Furtuna severa + Baterie suficienta pentru ocolide => EVADE
+    Pentru verificarea acestor teste, se ruleaza clasa AutonomousDecisionEngineTest

@@ -1,0 +1,7 @@
+package main;
+
+public enum Maneuvre {
+    PUSH_THROUGH,//zboara prin furtua
+    EVADE,//ruta ocolitoare
+    HOLD_POSITION//aterizare si asteptare
+}
