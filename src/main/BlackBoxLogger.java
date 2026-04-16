@@ -1,13 +1,31 @@
 package main;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class BlackBoxLogger {
-    private List<String> logs=new ArrayList<>();
-    public void logDecision(int second,double tau,Maneuvre maneuvre,double battery){
-        String entry=String.format("[T+%ds] Weather: Tau %.2f | Battery : %.1f | Action: %s",second,tau,battery,maneuvre);
-        logs.add(entry);
-        System.out.println(entry);
+    private NavigableMap<Integer,TelemetryPacket> logs;
+    private Map<Maneuvre,Integer> maneuvreStats;
+    public BlackBoxLogger(){
+        this.logs=new TreeMap<>();
+        this.maneuvreStats=new EnumMap<>(Maneuvre.class);
+        for(Maneuvre m : Maneuvre.values()){
+            maneuvreStats.put(m,0);
+        }
+    }
+    public void logsDecision(int second,double tau,double battery,Maneuvre maneuvre){
+        TelemetryPacket packet=new TelemetryPacket(second,tau,battery,maneuvre);
+        logs.put(second,packet);
+        System.out.println(packet);
+        Integer cnt=maneuvreStats.get(maneuvre);
+        cnt++;
+        maneuvreStats.put(maneuvre,cnt);
+    }
+    public List<TelemetryPacket> getLogsBetween(int start,int end){
+        return new ArrayList<>(logs.subMap(start,true,end,true).values());
+    }
+    public void printfFlightStat(){
+        for(Map.Entry<Maneuvre,Integer> m:maneuvreStats.entrySet()){
+            System.out.println("Maneuver "+ m.getKey()+" was called "+m.getValue()+" times");
+        }
     }
 }
