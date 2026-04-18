@@ -13,6 +13,7 @@ public class MissionSimulator {
     private static final double ENERGY_EVADE=0.15;
     private static final double BASE_PROGRESS_EVADE=0.8;
     private static final double MINOR_RESISTANCE=0.05;
+    private static final double WEAR_PUSH_THROUGH=0.002;
 
     private final DroneState drone;
     private final SensorManager sensor;
@@ -57,6 +58,9 @@ public class MissionSimulator {
             drone.updateEnergy(ENERGY_PUSH_THROUGH);
             double stormResistance=drone.currentTau*STORM_RESISTANCE;
             drone.updateDistance(BASE_PROGRESS_PUSH_THROUGH-stormResistance);
+            if(drone.currentTau>5.0){
+                sensor.apllySystemWear(drone.currentTau*WEAR_PUSH_THROUGH);
+            }
         } else if (maneuvre==Maneuvre.EVADE){
             drone.updateEnergy(ENERGY_EVADE);
             double minorResistance=drone.currentTau*MINOR_RESISTANCE;

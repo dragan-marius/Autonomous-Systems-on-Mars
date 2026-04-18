@@ -9,8 +9,8 @@ public class SensorManager {
         this.opticalSensor=opticalSensor;
     }
     public double getReliableVisibility(double tau){
-        opticalSensor.update(tau);
-        radarSensor.update(tau);
+        opticalSensor.updateTau(tau);
+        radarSensor.updateTau(tau);
         if(opticalSensor.isOperational()) {
             if(cameraWasDown){
                 System.out.println("Optical sensor is BACK ONLINE");
@@ -24,5 +24,9 @@ public class SensorManager {
             }
             return radarSensor.getValue();
         }
+    }
+    public void apllySystemWear(double wear){
+        opticalSensor.updateWear(wear);
+        radarSensor.updateWear(wear*0.5);
     }
 }

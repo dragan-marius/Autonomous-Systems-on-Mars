@@ -4,5 +4,8 @@ public interface Sensor {
     double getValue();
     boolean isOperational();
     String getSensorName();
-    public void update(double tau);
+    void updateTau(double tau);
+    double getHealth();
+    void updateWear(double wear);
+
 }
