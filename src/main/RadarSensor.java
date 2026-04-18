@@ -3,7 +3,7 @@ package main;
 public class RadarSensor implements Sensor{
     private double sensedTau;
     public double getValue(){
-        return 0.5;
+        return sensedTau;
     }
     public void update(double tau){
         this.sensedTau=tau;
