@@ -29,7 +29,7 @@ public class OpticalVisibilitySensor implements Sensor{
 
     @Override
     public boolean isOperational() {
-        if(lastValue<=10.0)
+        if(lastValue<=10.0 && health>0.1)
             return true;
         return false;
     }
