@@ -1,62 +1,70 @@
-Part 1 - Problem Analysis
+Autonomous Mars Aircraft Decision Engine(AMADE)
+    Overview
+        This project implements an autonomous decision-making system for an unnamed aircraft operating
+        in the extreme environment of Mars. The system is designed to handle critical scenarios, such as detecting
+        approaching dust storms, where communication delays with Earth (14-minute round-trip) make real-time human
+        intervention impossible.
+        The core of the solution is a Risk-Based Cost Function Engine that evalues flight maneuvres in real-time
+        based on sensor data, battery constraints, and environmental hazards.
 
-    1. Constrangerea de timp
-        Furtuna este la 12 minute distantam iar delay-ul de comunicare cu Pamantul este de 14 minute. Orice comanda de la sol
-va ajunge la drona abia dupa 2 minute dupa ce aceasta a intrat deja in furtuna. Acesta constrangere face imposibila
-teleoperarea si ne obliga sa proiectam un sistem decizional 100% autonom.
+    Part1: Problem Analysis
+    1. The Autonomy Gap
+    The aircraft detects a dust storm 12 minutes ahead, but the communication with Earth is 14 minutes. Any command
+    sent from Earth would arrive 2 minutes after the aircraft has already encountered the storm. This constraints necessitates
+    a 100% autonomous decision-making architecture.
+    2.Environmental Challenges on Mars
+        Atmosferic Opacity (Tau): Martian dust storms significantly increase the atmospheric opacity (Tau). While a clear
+        day has a Tau of ~0.5, severe storms can exceed Tau 10, rendering optical sensors nearly useless due to light
+        scattering.
+        Sensor Degradation: Dust particles on Mars are highly abrasive. Continuous exposure leads to physical wear on
+        lenses and mechanical joints.
+        Power & Density: Dust accumulation on solar panels can reduce energy efficiency by up to 80%. Furthermore,
+        storms change local air density, requiring more energy to maintain lift in an already thin atmosphere (1% of Earth's density).
+        Communication Noise: Iron oxide in the dust and electromagnetic interference from storm-generated lightning can
+        degrade signal quality, reducing bandwidth to minimal data packets.
+    3. Key Assumptions
+    The aircraft has a pre-defined library of contingency maneuvers: PUSH_THROUGH, EVADE, and HOLD_POSITION (Landing).
+    The aircraft is equipped with a heterogeneous sensor suite (Optical VIO and X-Band Radar) to provide redundancy.
 
-    2. Asumptii
-        Presupunem ca drona are deja stocate in memorie o serie de manevre de contingenta (Hold Position/Land, Evasion Route,
-Push Through). Problema arhitecturii noastre nu este sa calculeze aerodinamica zborului de la 0, ci sa evalueaza mediul
-pentru a alege rapid planul optim din aceasta baza de date.
+    Part 2: Technical Architecture
+    1. Decision Logic (Cost Function Approach)
+        Instead of rigid, hard-coded thresholds, the AutonomousDecisionEngine uses a Weighted Cost Function. It evaluates
+        each available maneuver and selects the one with the lowest "Risk Score".
+        Cost Factors:
+            Visibility Risk: Penalizes flying through high-Tau environments using optical sensors.
+            Battery Drain: Calculates the energy cost of longer evasion routes.
+            Mission Delay: Penalizes maneuvers that significantly stray from the mission timeline.
+            Safety Buffer: Automatically assigns a near-infinite cost (Double.MAX_VALUE) to maneuvers that would deplete
+            the battery below a 5% safety threshold.
 
-    3. Vizibilitatea
-        Praful este foarte fin iar vizbilitatea scade din cauza fenomenului de imprastiere a luminii (scattering),nu doar
-din cauza existenta prafului.
-        Tau-unitate de masura pentru opacitatea atmosferei. O zi senina are tau aproximativ egal cu 0.5 iar o furtuna severa
-poate ajunge la tau>10.
-        Senzorii afectati: Camerele video devin inutile foarte repede. Daca drona foloseste VIO( Visual Inertial Odometry)
-pentru a isi mentine pozitia, aceasta va esua. Drona nu mai stie daca se misca sau sta pe loc
-            Solutia tehnica: Din cauza riscului de esesc al sistemului VIO la un prag tau > 10, propun ca arhitectura software
-sa includa un mecanism de rezerva automat(fallback): cand senzorii optici raporteaza o acuratete scazuta, drona va trece
-exclusiv pe citirile de la Radar
+    2. Sensor Fusion & Fallback Strategy
+        The SensorManager implements a robust fallback mechanism:
+            Primary: Optical Camera (VIO) for high-precision navigation.
+            Secondary: X-Band Radar, which is less affected by dust scattering.
+            Logic: If the OpticalVisibilitySensor reports high noise or failure due to Tau levels, the system seamlessly
+            switches to Radar data to maintain situational awareness.
 
-    4. Impactul asupra Dronei
-        Puterea Solara: Daca drona este dependenta de panouri solare, o furtuna ii taie sursa de alimentare. Praful depus pe
-panourile solare poate reduce eficienta cu 80% chiar si dupa ce furtuna trece.
-        Densitatea Aerului: Furtuna schimba densitatea locala a atmosferei si creeaza turbulente masive. Deoarece atmosfera de
-pe Planeta Marte este deja foarte rarefiata(1% din cea a Pamantului), orice mica schimbare face ca drona sa consume mai
-multa energie pentru a ramane in aer.
-        Abraziunea: Particulele de praf nu pot fi rotunjite prin eroziune. Acestea pot slefui lentilele senzorilor sau pot
-bloca articulatiile mobile.
+    3. Hardware Wear Modeling
+        The simulation introduces a System Wear factor. As the aircraft flies through storms:
+            Sensor health decreases.
+            The getValue() method calculates Gaussian Noise scaled by the current wear, simulating the loss of precision
+            in aging hardware.
 
-    5. Comunicarea cu Pamantul
-        Frecvente: Comunicarea se face de obicei in benzile X sau Ka. Praful martian contine mult oxid de fier, care poate
-absorbi si reflecta undele radio.
-        Zgomotul: Furtunile de praf de pe Marte pot genera mici fulgere. Acestea creeaza zgomot electromagnetic care pot acoperi
-semnalul slab de pe Pamant
-        Concluzie: In timpul furtunii, latimea de banda(bitrate-ul) scade dramatic. Drona nu mai poate trimite video-uri complexe
-ci doar pachete scurte de date.
+    Part 3: Implementation Details
+        Core Components
+            AutonomousDecisionEngine: The "brain" that computes the optimal maneuver using the risk cost algorithm.
+            MissionSimulator: A time-step simulation engine that models the environment (Tau increases), energy
+            consumption, and distance progress
+            SensorManager: Orchestrates data from multiple sensors and handles failures.
+            BlackBoxLogger: Provides a telemetry-like stream of decisions and state changes for post-flight analysis.
 
-Part 2 - Proposed Solution & Architecture
-    Arhitectura Sistemului
-        Sistemul Concurent: Senzorii ruleaza pe thread-uri independente, actualizand un pipeline de date
-        Motorul de decizie: Ruleaza o data pe secunda, preia datele din pipeline si reevalueaza ruta optima folosind o
-functie de cost
-    Logica de decizie
-        Am ales o abordare bazata pe Cost Function deoarece ofera o scalabilitate mult mai buna. In loc sa fortam drona pe
-pe niste praguri rigide, calculam matematic un "Scor de risc" pentru fiecare manevra din baza de date. Manevra cu scorul
-cel mai mic va fi executata.
-
-    De ce solutia aceasta?
-        Siguranta: Sistemul elimina automat optiunile care ar duce la pierderea dronei
-        Predictibilitate: Fiind o functie pura, comportamentul dronei poate fi simulat si testat exhaustiv inainte de o
-        o misiune
-
-Part 3 - Rulare si testare
-    Solutia este construita in Java si include o suita de teste unitare pentru a demonstra ca este production-ready
-    Testele verifica scenarii precum:
-        Furtuna slaba + Baterie plina => PUSH_THROUGH
-        Furtuna severa + Baterie scazut => HOLD_POSITION
-        Furtuna severa + Baterie suficienta pentru ocolide => EVADE
-    Pentru verificarea acestor teste, se ruleaza clasa AutonomousDecisionEngineTest
+    Part 4: Testing & Validation
+        The project includes a suite of unit tests in AutonomousDecisionEngineTest covering critical flight scenarios:
+            Clear Weather + Full Battery: Validates that the engine chooses the most efficient path (PUSH_THROUGH).
+            Severe Storm + Sufficient Battery: Validates the choice of a safer detour (EVADE).
+            Severe Storm + Low Battery: Validates the emergency fail-safe landing (HOLD_POSITION) to prevent total
+            aircraft loss
+        How to Run
+            Compile the project: javac main/*.java
+            Run the simulation: java main.Main
+            Run tests: Execute AutonomousDecisionEngineTest via your IDE's JUnit runner.

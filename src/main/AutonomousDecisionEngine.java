@@ -19,6 +19,9 @@ public class AutonomousDecisionEngine {
     }
 
     private double calculateRiskCost(Maneuvre maneuvrer, double tau, double batteryLevel, double evasionExtraTime) {
+        if (batteryLevel < 5.0 && maneuvrer != Maneuvre.HOLD_POSITION) {
+            return Double.MAX_VALUE;
+        }
         double risk = 0;
         if (maneuvrer == Maneuvre.PUSH_THROUGH) {
             risk = (tau * VISIBILITY_RISK) + ((100 - batteryLevel) * 0.5);
