@@ -1,32 +1,35 @@
 package main;
 
 public class SensorManager {
-    private Sensor radarSensor;
-    private Sensor opticalSensor;
-    private boolean cameraWasDown=false;
-    public SensorManager(Sensor opticalSensor,Sensor radarSensor){
-        this.radarSensor=radarSensor;
-        this.opticalSensor=opticalSensor;
+    private final Sensor radarSensor;
+    private final Sensor opticalSensor;
+    private boolean cameraWasDown = false;
+
+    public SensorManager(Sensor opticalSensor, Sensor radarSensor) {
+        this.radarSensor = radarSensor;
+        this.opticalSensor = opticalSensor;
     }
-    public double getReliableVisibility(double tau){
+
+    public double getReliableVisibility(double tau) {
         opticalSensor.updateTau(tau);
         radarSensor.updateTau(tau);
-        if(opticalSensor.isOperational()) {
-            if(cameraWasDown){
+        if (opticalSensor.isOperational()) {
+            if (cameraWasDown) {
                 System.out.println("Optical sensor is BACK ONLINE");
-                cameraWasDown=false;
+                cameraWasDown = false;
             }
             return opticalSensor.getValue();
         } else {
-            if(!cameraWasDown) {
+            if (!cameraWasDown) {
                 System.out.println("Camera failure: Switching to radar backup");
-                cameraWasDown=true;
+                cameraWasDown = true;
             }
             return radarSensor.getValue();
         }
     }
-    public void apllySystemWear(double wear){
+
+    public void apllySystemWear(double wear) {
         opticalSensor.updateWear(wear);
-        radarSensor.updateWear(wear*0.5);
+        radarSensor.updateWear(wear * 0.5);
     }
 }
