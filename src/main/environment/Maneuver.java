@@ -1,4 +1,4 @@
-package main;
+package main.environment;
 
 public enum Maneuver {
     PUSH_THROUGH,//zboara prin furtua

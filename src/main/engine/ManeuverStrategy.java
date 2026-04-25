@@ -1,4 +1,7 @@
-package main;
+package main.engine;
+
+import main.environment.DroneState;
+import main.sensors.SensorManager;
 
 public interface ManeuverStrategy {
     String getName();

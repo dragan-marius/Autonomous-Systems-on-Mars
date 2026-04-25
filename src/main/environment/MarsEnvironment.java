@@ -1,4 +1,4 @@
-package main;
+package main.environment;
 
 import java.util.Random;
 

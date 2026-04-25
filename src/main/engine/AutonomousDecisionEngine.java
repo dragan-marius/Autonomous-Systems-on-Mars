@@ -1,7 +1,6 @@
-package main;
+package main.engine;
 
 import java.util.List;
-import java.util.ListResourceBundle;
 
 public class AutonomousDecisionEngine {
     private static final double CRITICAL_BATTERY_THRESHOLD = 5.0;

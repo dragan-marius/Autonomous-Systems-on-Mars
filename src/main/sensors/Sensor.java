@@ -1,4 +1,4 @@
-package main;
+package main.sensors;
 
 public interface Sensor {
     double getValue();

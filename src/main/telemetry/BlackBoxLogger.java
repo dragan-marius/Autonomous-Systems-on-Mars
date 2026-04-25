@@ -1,4 +1,6 @@
-package main;
+package main.telemetry;
+
+import main.environment.Maneuver;
 
 import java.util.*;
 

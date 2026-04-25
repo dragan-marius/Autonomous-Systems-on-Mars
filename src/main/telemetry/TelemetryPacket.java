@@ -1,4 +1,6 @@
-package main;
+package main.telemetry;
+
+import main.environment.Maneuver;
 
 public class TelemetryPacket {
     private int second;

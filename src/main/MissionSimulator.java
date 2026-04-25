@@ -1,6 +1,12 @@
 package main;
 
-import java.util.Random;
+import main.engine.AutonomousDecisionEngine;
+import main.engine.ManeuverStrategy;
+import main.environment.DroneState;
+import main.environment.Maneuver;
+import main.environment.MarsEnvironment;
+import main.sensors.SensorManager;
+import main.telemetry.BlackBoxLogger;
 
 public class MissionSimulator {
     private static final int MAX_TIME = 720;

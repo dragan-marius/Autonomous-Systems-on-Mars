@@ -1,4 +1,7 @@
-package main;
+package main.engine;
+
+import main.environment.DroneState;
+import main.sensors.SensorManager;
 
 public class HoldPositionStrategy implements ManeuverStrategy {
     private static final double MISSION_DELAY = 1.5;

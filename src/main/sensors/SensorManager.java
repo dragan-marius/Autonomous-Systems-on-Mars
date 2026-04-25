@@ -1,4 +1,4 @@
-package main;
+package main.sensors;
 
 public class SensorManager {
     private final Sensor radarSensor;

@@ -1,6 +1,9 @@
-package main;
+package main.engine;
 
-public class EvadeStrategy implements  ManeuverStrategy{
+import main.environment.DroneState;
+import main.sensors.SensorManager;
+
+public class EvadeStrategy implements ManeuverStrategy {
     private static final double BATTERY_DRAIN = 2.0;
     private static final double MISSION_DELAY = 1.5;
     private static final double ENERGY_EVADE = 0.15;

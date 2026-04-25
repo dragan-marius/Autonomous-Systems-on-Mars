@@ -1,5 +1,14 @@
 package main;
 
+import main.engine.AutonomousDecisionEngine;
+import main.engine.EvadeStrategy;
+import main.engine.HoldPositionStrategy;
+import main.engine.PushThroughStrategy;
+import main.sensors.OpticalVisibilitySensor;
+import main.sensors.RadarSensor;
+import main.sensors.Sensor;
+import main.sensors.SensorManager;
+
 public class Main {
     static void main(String[] args) {
         Sensor optical = new OpticalVisibilitySensor();

@@ -1,6 +1,6 @@
 package test;
 
-import main.*;
+import main.engine.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

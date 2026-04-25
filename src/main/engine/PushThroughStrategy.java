@@ -1,6 +1,9 @@
-package main;
+package main.engine;
 
-public class PushThroughStrategy implements  ManeuverStrategy{
+import main.environment.DroneState;
+import main.sensors.SensorManager;
+
+public class PushThroughStrategy implements ManeuverStrategy {
     private static final double VISIBILITY_RISK = 3.5;
     private static final double ENERGY_PUSH_THROUGH = 0.05;
     private static final double BASE_PROGRESS_PUSH_THROUGH = 1.5;
