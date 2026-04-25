@@ -4,13 +4,13 @@ public class TelemetryPacket {
     private int second;
     private double tau;
     private double battery;
-    private Maneuvre maneuvre;
+    private Maneuver maneuver;
 
-    public TelemetryPacket(int second, double tau, double battery, Maneuvre maneuvre) {
+    public TelemetryPacket(int second, double tau, double battery, Maneuver maneuver) {
         this.second = second;
         this.battery = battery;
         this.tau = tau;
-        this.maneuvre = maneuvre;
+        this.maneuver = maneuver;
     }
 
     public int getSecond() {
@@ -37,15 +37,15 @@ public class TelemetryPacket {
         this.battery = battery;
     }
 
-    public Maneuvre getManeuvre() {
-        return maneuvre;
+    public Maneuver getManeuvre() {
+        return maneuver;
     }
 
-    public void setManeuvre(Maneuvre maneuvre) {
-        this.maneuvre = maneuvre;
+    public void setManeuvre(Maneuver maneuver) {
+        this.maneuver = maneuver;
     }
 
     public String toString() {
-        return String.format("[T+%03ds] Tau: %.2f | Battery: %.1f | Action: %s", second, tau, battery, maneuvre);
+        return String.format("[T+%03ds] Tau: %.2f | Battery: %.1f | Action: %s", second, tau, battery, maneuver);
     }
 }

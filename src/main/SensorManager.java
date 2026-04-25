@@ -28,7 +28,7 @@ public class SensorManager {
         }
     }
 
-    public void apllySystemWear(double wear) {
+    public void applySystemWear(double wear) {
         opticalSensor.updateWear(wear);
         radarSensor.updateWear(wear * 0.5);
     }
