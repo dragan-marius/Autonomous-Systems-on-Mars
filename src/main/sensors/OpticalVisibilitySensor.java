@@ -1,7 +1,11 @@
 package main.sensors;
 
 import static java.lang.Math.max;
-
+/**
+ * Primary navigation sensor (Visual Inertial Odometry).
+ * Provides high-precision data in clear conditions but is highly susceptible
+ * to light scattering, noise, and physical degradation during Martian dust storms.
+ */
 public class OpticalVisibilitySensor implements Sensor {
     private double lastValue;
     private boolean operational = true;

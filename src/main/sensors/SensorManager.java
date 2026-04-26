@@ -1,5 +1,9 @@
 package main.sensors;
-
+/**
+ * Orchestrates heterogeneous sensor data (Optical and X-Band Radar).
+ * Responsible for detecting hardware failures and executing fallback protocols
+ * to maintain situational awareness in harsh environments.
+ */
 public class SensorManager {
     private final Sensor radarSensor;
     private final Sensor opticalSensor;
@@ -10,6 +14,10 @@ public class SensorManager {
         this.opticalSensor = opticalSensor;
     }
 
+    /**
+     * Polls the primary optical sensor. If atmospheric opacity (Tau) causes complete
+     * optical failure, it seamlessly switches to the secondary Radar system.
+     */
     public double getReliableVisibility(double tau) {
         opticalSensor.updateTau(tau);
         radarSensor.updateTau(tau);

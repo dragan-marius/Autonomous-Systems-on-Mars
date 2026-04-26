@@ -1,7 +1,11 @@
 package main.sensors;
 
 import static java.lang.Math.max;
-
+/**
+ * Secondary backup sensor (X-Band Radar).
+ * While generally providing lower resolution data than optical sensors, it is immune
+ * to dust-induced opacity (Tau) and maintains reliability during severe storms.
+ */
 public class RadarSensor implements Sensor {
     private double sensedTau;
     private double health = 1.0;

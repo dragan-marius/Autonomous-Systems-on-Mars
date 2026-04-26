@@ -3,6 +3,11 @@ package main.telemetry;
 import main.environment.Maneuver;
 
 import java.util.*;
+/**
+ * Immutable flight data recorder.
+ * Captures a chronological timeline of the aircraft's internal state and the
+ * engine's autonomous decisions for post-flight evaluation and debugging.
+ */
 
 public class BlackBoxLogger {
     private final NavigableMap<Integer, TelemetryPacket> logs;

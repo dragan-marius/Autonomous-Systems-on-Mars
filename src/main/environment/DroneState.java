@@ -2,6 +2,12 @@ package main.environment;
 
 import static java.lang.Math.max;
 
+/**
+ * Represents the physical state and telemetry data of the aircraft.
+ * Tracks critical resources such as battery levels, distance to the objective,
+ * and the current environmental conditions immediately surrounding the drone.
+ */
+
 public class DroneState {
     private double battery = 100.0;
     private double currentTau = 0.5;

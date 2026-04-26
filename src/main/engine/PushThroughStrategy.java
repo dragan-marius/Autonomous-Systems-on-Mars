@@ -2,7 +2,11 @@ package main.engine;
 
 import main.environment.DroneState;
 import main.sensors.SensorManager;
-
+/**
+ * Aggressive flight strategy.
+ * Prioritizes mission progress and battery conservation over visibility safety.
+ * Becomes highly risky during severe dust storms (high Tau).
+ */
 public class PushThroughStrategy implements ManeuverStrategy {
     private static final double VISIBILITY_RISK = 3.5;
     private static final double ENERGY_PUSH_THROUGH = 0.05;
@@ -15,6 +19,7 @@ public class PushThroughStrategy implements ManeuverStrategy {
 
     @Override
     public double calculateRisk(double tau, double batteryLevel, double evasionExtraTime) {
+        // Balances the danger of flying blind (Tau) against the necessity of preserving battery
         return (tau * VISIBILITY_RISK) + ((100 - batteryLevel) * 0.5);
     }
 
